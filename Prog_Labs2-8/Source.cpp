@@ -126,7 +126,7 @@ void ArraySaveBinFile(int** array1, int* columnsCount, int rows)
 	char fileName[20];
 
 	GetFileName(fileName);
-	if (fopen_s(&f, fileName, "w") != 0)
+	if (fopen_s(&f, fileName, "wb") != 0)
 	{
 		printf_s("Error opening file.\n");
 		return;
@@ -142,6 +142,35 @@ void ArraySaveBinFile(int** array1, int* columnsCount, int rows)
 	}
 
 	fclose(f);
+}
+
+void BinFileArrayFilling(int*** array1, int** columnsCount, int* rows)
+{
+	FILE* f;
+	char fileName[20];
+
+	GetFileName(fileName);
+	if (fopen_s(&f, fileName, "rb") != 0)
+	{
+		printf_s("Error opening file.\n");
+		return;
+	}
+
+	fread(rows, sizeof(int), 1, f);
+
+	MainMalloc(array1, columnsCount, *rows);
+
+	for (int i = 0; i < *rows; i++)
+	{
+		fread(&(*columnsCount)[i], sizeof(int), 1, f);
+		(*array1)[i] = (int*)malloc(sizeof(int) * (*columnsCount)[i]);
+
+		fread((*array1)[i], sizeof(int), (*columnsCount)[i], f);
+	}
+
+	fclose(f);
+
+	printf_s("Succesful filling.\n");
 }
 
 int main()
@@ -183,6 +212,7 @@ int main()
 			break;
 
 		case 3:
+			BinFileArrayFilling(&array1, &columnsCount, &rows);
 			flug1 = 1;
 			break;
 
