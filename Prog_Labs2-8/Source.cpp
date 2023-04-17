@@ -21,16 +21,39 @@ void GetRows(int* rows)
 void MainMalloc(int ***array1, int** columnsCount, int rows)
 {
 	*array1 = (int**)malloc(sizeof(int*) * rows);
+	if (*array1 == 0)
+	{
+		printf_s("Can't add memmory!\n");
+		exit(1);
+	}
+	
 	*columnsCount = (int*)malloc(sizeof(int) * rows);
+	if (*columnsCount == 0)
+	{
+		printf_s("Can't add memmory!\n");
+		exit(1);
+	}
 }
 
 void ManualArrayFilling(int** array1, int* columnsCount, int rows)
 {
 	for (int i = 0; i < rows; i++)
 	{
-		printf_s("Enter count of columns in %d line: ", i + 1);
-		scanf_s("%d", &columnsCount[i]);
+		while (true)
+		{
+			printf_s("Enter count of columns in %d line: ", i + 1);
+			scanf_s("%d", &columnsCount[i]);
+			if (columnsCount[i] <= 0)
+				printf_s("Invalid value!\n");
+			else
+				break;
+		}
 		array1[i] = (int*)malloc(sizeof(int) * columnsCount[i]);
+		if (array1[i] == 0)
+		{
+			printf_s("Can't add memmory!\n");
+			exit(1);
+		}
 		for (int j = 0; j < columnsCount[i]; j++)
 		{
 			printf_s("Enter array[%d][%d]: ", i + 1, j + 1);
@@ -109,6 +132,11 @@ void TextFileArrayFilling(int *** array1, int** columnsCount,int * rows)
 	{
 		fscanf_s(f, "%d", &(*columnsCount)[i]);
 		(*array1)[i] = (int*)malloc(sizeof(int) * (*columnsCount)[i]);
+		if ((*array1)[i] == 0)
+		{
+			printf_s("Can't add memmory!\n");
+			exit(1);
+		}
 		for (int j = 0; j < (* columnsCount)[i]; j++)
 		{
 			fscanf_s(f, "%d", &(*array1)[i][j]);
@@ -164,6 +192,11 @@ void BinFileArrayFilling(int*** array1, int** columnsCount, int* rows)
 	{
 		fread(&(*columnsCount)[i], sizeof(int), 1, f);
 		(*array1)[i] = (int*)malloc(sizeof(int) * (*columnsCount)[i]);
+		if ((*array1)[i] == 0)
+		{
+			printf_s("Can't add memmory!\n");
+			exit(1);
+		}
 
 		fread((*array1)[i], sizeof(int), (*columnsCount)[i], f);
 	}
